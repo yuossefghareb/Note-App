@@ -38,15 +38,12 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //   backgroundColor:AppStyle.bgColor,
+  //   backgroundColor:AppStyle.bgColor,
       appBar: AppBar(
-        title: Text(
-          'Folders',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
+        title: Text('Folders',style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold),),
         elevation: 0.0,
         centerTitle: true,
-        backgroundColor: Colors.white,
+      backgroundColor:  Colors.white,
         actions: [
           IconButton(
               onPressed: () async {
@@ -62,85 +59,63 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           Navigator.of(context).pushNamed('addCat');
         },
+        
         child: Icon(Icons.add),
       ),
       body: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, mainAxisExtent: 160),
-        itemCount: data.length + 1,
+        itemCount: data.length,
         itemBuilder: (context, index) {
-          if (index == data.length) {
-            return InkWell(
-              onTap: () {
-               
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Card(
-                  child: Column(children: [
-                    Container(
+          return InkWell(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => ViewNote(catgoreyid: data[index].id),
+              ));
+            },
+            onLongPress: () {
+              AwesomeDialog(
+                context: context,
+                dialogType: DialogType.question,
+                animType: AnimType.rightSlide,
+                btnOkOnPress: () async {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => EditCat(
+                          oldname: data[index]['name'],
+                          doc_id: data[index].id)));
+                  print('ok');
+                },
+                btnCancelOnPress: () async {
+                  await FirebaseFirestore.instance
+                      .collection('categories')
+                      .doc(data[index].id)
+                      .delete();
+                  Navigator.of(context).pushReplacementNamed('homePage');
+                },
+                btnOkText: 'Edit',
+                btnCancelText: 'Delete',
+                title: "Chosse you want",
+                
+              ).show();
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Card(
+              
+                child: Column(children: [
+                  Container(
+                      
                       padding: EdgeInsets.all(10.0),
-                      child: Icon(
-                        Icons.add,
-                        size: 80,
+                      child: Icon(Icons.folder,size: 80,),
                       ),
-                    ),
-                   
-                  ]),
-                ),
+                  Text(
+                    '${data[index]['name']}',
+                    style: TextStyle(fontSize: 22,color: Colors.black),
+                  )
+                ]),
               ),
-            );
-          } else {
-            return InkWell(
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => ViewNote(catgoreyid: data[index].id),
-                ));
-              },
-              onLongPress: () {
-                AwesomeDialog(
-                  context: context,
-                  dialogType: DialogType.question,
-                  animType: AnimType.rightSlide,
-                  btnOkOnPress: () async {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => EditCat(
-                            oldname: data[index]['name'],
-                            doc_id: data[index].id)));
-                    print('ok');
-                  },
-                  btnCancelOnPress: () async {
-                    await FirebaseFirestore.instance
-                        .collection('categories')
-                        .doc(data[index].id)
-                        .delete();
-                    Navigator.of(context).pushReplacementNamed('homePage');
-                  },
-                  btnOkText: 'Edit',
-                  btnCancelText: 'Delete',
-                  title: "Chosse you want",
-                ).show();
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Card(
-                  child: Column(children: [
-                    Container(
-                      padding: EdgeInsets.all(10.0),
-                      child: Icon(
-                        Icons.folder,
-                        size: 80,
-                      ),
-                    ),
-                    Text(
-                      '${data[index]['name']}',
-                      style: TextStyle(fontSize: 22, color: Colors.black),
-                    )
-                  ]),
-                ),
-              ),
-            );
-          }
+            ),
+          );
         },
       ),
     );

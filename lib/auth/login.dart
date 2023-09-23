@@ -149,7 +149,7 @@ class _LoginState extends State<Login> {
                         dialogType: DialogType.error,
                         animType: AnimType.rightSlide,
                         title: 'error',
-                        desc: 'Wrong  email or Wrong password ',
+                        desc: ' email or Wrong password provided',
                       ).show();
                     
                   }
