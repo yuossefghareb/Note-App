@@ -4,6 +4,8 @@ import 'package:firebase02/editCategory.dart';
 import 'package:firebase02/note/viewnote.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class HomePage extends StatefulWidget {
@@ -38,12 +40,15 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-  //   backgroundColor:AppStyle.bgColor,
+      //   backgroundColor:AppStyle.bgColor,
       appBar: AppBar(
-        title: Text('Folders',style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold),),
+        title: Text(
+          'Folders',
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
         elevation: 0.0,
         centerTitle: true,
-      backgroundColor:  Colors.white,
+        backgroundColor: Colors.white,
         actions: [
           IconButton(
               onPressed: () async {
@@ -59,65 +64,79 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           Navigator.of(context).pushNamed('addCat');
         },
-        
         child: Icon(Icons.add),
       ),
-      body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, mainAxisExtent: 160),
-        itemCount: data.length,
-        itemBuilder: (context, index) {
-          return InkWell(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => ViewNote(catgoreyid: data[index].id),
-              ));
-            },
-            onLongPress: () {
-              AwesomeDialog(
-                context: context,
-                dialogType: DialogType.question,
-                animType: AnimType.rightSlide,
-                btnOkOnPress: () async {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => EditCat(
-                          oldname: data[index]['name'],
-                          doc_id: data[index].id)));
-                  print('ok');
-                },
-                btnCancelOnPress: () async {
-                  await FirebaseFirestore.instance
-                      .collection('categories')
-                      .doc(data[index].id)
-                      .delete();
-                  Navigator.of(context).pushReplacementNamed('homePage');
-                },
-                btnOkText: 'Edit',
-                btnCancelText: 'Delete',
-                title: "Chosse you want",
-                
-              ).show();
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Card(
-              
-                child: Column(children: [
-                  Container(
-                      
-                      padding: EdgeInsets.all(10.0),
-                      child: Icon(Icons.folder,size: 80,),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : data.length == 0
+              ? Center(
+                  child: Text(
+                    '   No Folders \nAdd Your Folders',
+                    style: TextStyle(color: Colors.grey, fontSize: 30),
+                  ),
+                )
+              : GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2, mainAxisExtent: 160),
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              ViewNote(catgoreyid: data[index].id),
+                        ));
+                       // Get.to(ViewNote(catgoreyid: data[index].id));
+                      },
+                      onLongPress: () {
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.question,
+                          animType: AnimType.rightSlide,
+                          btnOkOnPress: () async {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => EditCat(
+                                    oldname: data[index]['name'],
+                                    doc_id: data[index].id)));
+                            print('ok');
+                          },
+                          btnCancelOnPress: () async {
+                            await FirebaseFirestore.instance
+                                .collection('categories')
+                                .doc(data[index].id)
+                                .delete();
+                            Navigator.of(context)
+                                .pushReplacementNamed('homePage');
+                          },
+                          btnOkText: 'Edit',
+                          btnCancelText: 'Delete',
+                          title: "Chosse you want",
+                        ).show();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Card(
+                          child: Column(children: [
+                            Container(
+                              padding: EdgeInsets.all(10.0),
+                              child: Icon(
+                                Icons.folder,
+                                size: 80,
+                              ),
+                            ),
+                            Text(
+                              '${data[index]['name']}',
+                              style:
+                                  TextStyle(fontSize: 22, color: Colors.black),
+                            )
+                          ]),
+                        ),
                       ),
-                  Text(
-                    '${data[index]['name']}',
-                    style: TextStyle(fontSize: 22,color: Colors.black),
-                  )
-                ]),
-              ),
-            ),
-          );
-        },
-      ),
+                    );
+                  },
+                ),
     );
   }
 }

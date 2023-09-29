@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase02/components/custombuttonauth.dart';
 import 'package:firebase02/components/customformfiledauth.dart';
+import 'package:firebase02/components/customformfilledNote.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 

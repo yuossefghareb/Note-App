@@ -80,7 +80,9 @@ class _ViewNoteState extends State<ViewNote> {
         ),
 
         
-        body: GridView.builder(
+        body:isLoading?Center(child: CircularProgressIndicator(),)
+        :data.length==0? Center(child:Text('   No Notes \nAdd Your Notes',style: TextStyle(color: Colors.grey,fontSize: 30),),)
+        : GridView.builder(
           
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, mainAxisExtent: 250,),

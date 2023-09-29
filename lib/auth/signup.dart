@@ -1,9 +1,12 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase02/components/costomlogoauth.dart';
 import 'package:firebase02/components/fireBareAuth.dart';
+import 'package:firebase02/components/formTextpass.dart';
+import 'package:firebase02/provider.dart/cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../components/custombuttonauth.dart';
 import '../components/customformfiledauth.dart';
@@ -27,7 +30,9 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+        body: ChangeNotifierProvider(
+      create: (context) => MyModel(),
+      child: Container(
         padding: const EdgeInsets.all(20),
         child: ListView(children: [
           Form(
@@ -81,16 +86,20 @@ class _SignUpState extends State<SignUp> {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 Container(height: 10),
-                CustomTextForm(
-                  hinttext: "ُEnter Your Password",
-                  mycontroller: Cpassword,
-                  validator: (value) {
-                    if (value == "") {
-                      return 'password must not be empty';
-                    }
-                    return null;
-                  },
-                ),
+                Consumer<MyModel>(builder: (context, model, chlid) {
+                  return customFormPassword(
+                    suufixicon: model.icon,
+                    hinttext: "ُEnter Your Password",
+                    obscure: model.abs,
+                    mycontroller: Cpassword,
+                    validator: (value) {
+                      if (value == "") {
+                        return 'password must not be empty';
+                      }
+                      return null;
+                    },
+                  );
+                }),
                 Container(
                   height: 40,
                 ),
@@ -114,21 +123,21 @@ class _SignUpState extends State<SignUp> {
                     if (e.code == 'weak-password') {
                       print('The password provided is too weak.');
                       AwesomeDialog(
-                        context:context,
+                        context: context,
                         dialogType: DialogType.warning,
                         animType: AnimType.rightSlide,
                         title: 'error',
                         desc: 'The password provided is too weak.',
-                         ).show();
+                      ).show();
                     } else if (e.code == 'email-already-in-use') {
                       print('The account already exists for that email.');
                       AwesomeDialog(
-                        context:context,
+                        context: context,
                         dialogType: DialogType.warning,
                         animType: AnimType.rightSlide,
                         title: 'error',
                         desc: 'The account already exists for that email.',
-                         ).show();
+                      ).show();
                     }
                   } catch (e) {
                     print(e);
@@ -156,6 +165,6 @@ class _SignUpState extends State<SignUp> {
           )
         ]),
       ),
-    );
+    ));
   }
 }

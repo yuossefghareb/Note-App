@@ -1,16 +1,21 @@
+import 'package:firebase02/provider.dart/cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class CustomTextForm extends StatelessWidget {
+class customFormPassword extends StatelessWidget {
   final String hinttext;
-  final bool? obscure;
+  final bool obscure;
+  final IconData suufixicon;
   final TextEditingController mycontroller;
   final String? Function(String?)? validator;
 
-  const CustomTextForm({
+  const customFormPassword({
     super.key,
     required this.hinttext,
     required this.mycontroller,
-    required this.validator,  this.obscure,
+    required this.validator,
+   required this.obscure,
+    required this.suufixicon,
   });
 
   @override
@@ -18,9 +23,19 @@ class CustomTextForm extends StatelessWidget {
     return TextFormField(
       controller: mycontroller,
       validator: validator,
-      obscureText: obscure ?? false,
+      obscureText: obscure ,
       decoration: InputDecoration(
           hintText: hinttext,
+          suffixIcon: Consumer<MyModel>(
+            builder: (context, value, child) {
+              return IconButton(
+                icon: Icon(suufixicon),
+                onPressed: () {
+                  value.chnageabs();
+                },
+              );
+            },
+          ),
           hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
           contentPadding: EdgeInsets.symmetric(vertical: 2, horizontal: 20),
           filled: true,
